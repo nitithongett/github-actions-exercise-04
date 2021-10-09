@@ -1,6 +1,15 @@
 on: [push]
 
 jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
   hello_world_job:
     runs-on: ubuntu-latest
     name: A job to say hello
@@ -12,3 +21,14 @@ jobs:
           who-to-greet: 'Mona the Octocat'
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.Heroku_API_KEY}}
+          heroku_app_name: "nitithon-github-actions-03"
+          heroku_email: "nitithon.gett@gmail.com"      
